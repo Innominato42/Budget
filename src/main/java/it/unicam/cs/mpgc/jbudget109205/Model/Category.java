@@ -17,16 +17,16 @@ public class Category implements ICategory {
     }
     @Override
     public String getName() {
-        return "";
+        return name;
     }
 
     @Override
     public ICategory getParent() {
-        return null;
+        return this.parent;
     }
 
     @Override
     public List<ICategory> getChildren() {
-        return List.of();
+        return children;
     }
 }

@@ -10,10 +10,11 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
 test {
+    // Necessario per abilitare JUnit 5 con Gradle
     useJUnitPlatform()
 }
