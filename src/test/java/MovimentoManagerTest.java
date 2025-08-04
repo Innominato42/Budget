@@ -37,7 +37,7 @@ public class MovimentoManagerTest {
 
     @Test
     public void testAggiuntaEMovimentoPresente() {
-        assertEquals(3, manager.getTuttiIMovimenti().size());
+        assertEquals(3, manager.getAllMovimenti().size());
         assertEquals(m1, manager.getMovimento(m1.getId()));
     }
 

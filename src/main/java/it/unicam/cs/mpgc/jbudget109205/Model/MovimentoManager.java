@@ -40,7 +40,7 @@ public class MovimentoManager {
      * Restituisce tutti i movimenti registrati.
      * @return lista di tutti i movimenti
      */
-    public List<IMovimento> getTuttiIMovimenti() {
+    public List<IMovimento> getAllMovimenti() {
         return new ArrayList<>(movimenti.values());
     }
 
