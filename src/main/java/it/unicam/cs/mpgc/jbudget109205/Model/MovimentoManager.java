@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MovimentoMagager {
+public class MovimentoManager {
 
     // Mappa dei movimenti, indicizzati per ID univoco
     private final Map<UUID, IMovimento> movimenti = new HashMap<>();
