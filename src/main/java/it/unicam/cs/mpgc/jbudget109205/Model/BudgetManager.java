@@ -97,15 +97,27 @@ public class BudgetManager implements IBudgetManager {
     }
 
     /**
-     * Restituisce la lista di tutte le voci di budget registrate.
+     * Restituisce tutte le voci di budget registrate come oggetti Budget.
      *
-     * @return una lista immutabile contenente tutte le voci di budget.
-     *         Attualmente restituisce una lista vuota, quindi
-     *         deve essere implementato per restituire i dati reali.
+     * @return lista di tutte le voci di budget
      */
     @Override
     public List<Budget> getAllBudgetEntries() {
-        return List.of();
+        List<Budget> result = new ArrayList<>();
+
+        for (Map.Entry<ICategory, Map<YearMonth, Double>> categoryEntry : budgets.entrySet()) {
+            ICategory category = categoryEntry.getKey();
+            Map<YearMonth, Double> monthlyBudgets = categoryEntry.getValue();
+
+            for (Map.Entry<YearMonth, Double> monthEntry : monthlyBudgets.entrySet()) {
+                YearMonth month = monthEntry.getKey();
+                double amount = monthEntry.getValue();
+
+                result.add(new Budget(category, month, amount));
+            }
+        }
+
+        return result;
     }
 
 }
