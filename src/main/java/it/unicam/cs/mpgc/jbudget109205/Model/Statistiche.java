@@ -76,7 +76,7 @@ public class Statistiche implements IStatistiche {
     @Override
     public ICategory getCategoriaPiuCostosa(YearMonth month) {
         return getSpesePerCategoria(month).entrySet().stream()
-                .max(Map.Entry.comparingByValue())
+                .max((e1, e2) -> Double.compare(Math.abs(e1.getValue()), Math.abs(e2.getValue())))
                 .map(Map.Entry::getKey)
                 .orElse(null);
     }
