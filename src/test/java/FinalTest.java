@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,20 +24,20 @@ public class FinalTest {
         Category svago = new Category("Svago", null);
 
         // 3. Imposto budget
-        budgetManager.setBudget(spesa, 500.0);
-        budgetManager.setBudget(svago, 200.0);
+        budgetManager.setBudget(spesa, YearMonth.of(2025, 8), 500.0);
+        budgetManager.setBudget(svago, YearMonth.of(2025, 8), 200.0);
 
         // 4. Aggiungo movimento reale (spesa supermercato)
-        Movimento m1 = new Movimento(-100.0, "Supermercato", LocalDate.of(2025, 8, 1));
+        Movimento m1 = new Movimento(-100.0,  LocalDate.of(2025, 8, 1),"Supermercato");
         m1.aggiungiCategoria(spesa);
         movimentoManager.aggiungiMovimento(m1);
 
         // 5. Creo un movimento programmato (cinema)
-        MovimentoProgrammato mp = new MovimentoProgrammato(
-                -50.0,
+        MovimentoProgrammato mp =new MovimentoProgrammato(
+                LocalDate.of(2025, 8, 10),
+                100.0,
                 "Cinema",
-                LocalDate.of(2025, 8, 8),
-                List.of(svago)
+                Set.of(svago)
         );
         scadenziario.aggiungiMovimento(mp);
 
@@ -44,8 +45,10 @@ public class FinalTest {
         scadenziario.eseguiMovimenti(LocalDate.of(2025, 8, 8));
 
         // 7. Verifico i budget impostati
-        assertEquals(500.0, budgetManager.getBudget(spesa));
-        assertEquals(200.0, budgetManager.getBudget(svago));
+        assertEquals(500.0, budgetManager.getBudget(spesa, YearMonth.of(2025, 8)));
+
+        assertEquals(200.0, budgetManager.getBudget(svago, YearMonth.of(2025, 8)));
+
 
         // 8. Verifico le spese di agosto
         Map<ICategory, Double> speseAgosto = statistiche.getSpesePerCategoria(YearMonth.of(2025, 8));
@@ -58,5 +61,5 @@ public class FinalTest {
         // 10. Verifico categoria più costosa
         assertEquals(spesa, statistiche.getCategoriaPiuCostosa(YearMonth.of(2025, 8)));
     }
-    }
 }
+

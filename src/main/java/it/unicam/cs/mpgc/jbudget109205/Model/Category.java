@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.jbudget109205.Model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Category implements ICategory {
     private String name;
@@ -28,5 +29,18 @@ public class Category implements ICategory {
     @Override
     public List<ICategory> getChildren() {
         return children;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category)) return false;
+        Category other = (Category) o;
+        return Objects.equals(name, other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
