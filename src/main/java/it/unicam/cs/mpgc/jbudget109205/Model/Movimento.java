@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109205.Model;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +19,9 @@ public class Movimento implements IMovimento{
         this.description = description;
         this.categories = categories;
     }
+    public Movimento(double amount, LocalDate date, String description) {
+        this(UUID.randomUUID(), date, amount, description, new HashSet<>());
+    }
 
     @Override
     public LocalDate getDate() { return date; }
@@ -34,6 +38,9 @@ public class Movimento implements IMovimento{
     @Override
     public UUID getId() {
         return id;
+    }
+    public void aggiungiCategoria(ICategory category) {
+        categories.add(category);
     }
 
 }
