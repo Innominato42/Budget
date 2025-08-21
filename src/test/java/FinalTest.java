@@ -28,27 +28,25 @@ public class FinalTest {
         budgetManager.setBudget(svago, YearMonth.of(2025, 8), 200.0);
 
         // 4. Aggiungo movimento reale (spesa supermercato)
-        Movimento m1 = new Movimento(-100.0,  LocalDate.of(2025, 8, 1),"Supermercato");
+        Movimento m1 = new Movimento(-100.0, LocalDate.of(2025, 8, 1), "Supermercato");
         m1.aggiungiCategoria(spesa);
         movimentoManager.aggiungiMovimento(m1);
 
         // 5. Creo un movimento programmato (cinema)
-        MovimentoProgrammato mp =new MovimentoProgrammato(
+        MovimentoProgrammato mp = new MovimentoProgrammato(
                 LocalDate.of(2025, 8, 10),
-                100.0,
+                -50.0, // NEGATIVO perché è una spesa
                 "Cinema",
                 Set.of(svago)
         );
         scadenziario.aggiungiMovimento(mp);
 
         // 6. Eseguo i movimenti programmati alla data prevista
-        scadenziario.eseguiMovimenti(LocalDate.of(2025, 8, 8));
+        scadenziario.eseguiMovimenti(LocalDate.of(2025, 8, 10));
 
         // 7. Verifico i budget impostati
         assertEquals(500.0, budgetManager.getBudget(spesa, YearMonth.of(2025, 8)));
-
         assertEquals(200.0, budgetManager.getBudget(svago, YearMonth.of(2025, 8)));
-
 
         // 8. Verifico le spese di agosto
         Map<ICategory, Double> speseAgosto = statistiche.getSpesePerCategoria(YearMonth.of(2025, 8));

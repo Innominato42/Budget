@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 group = 'org.example'
@@ -10,13 +12,22 @@ repositories {
 }
 
 dependencies {
-    // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
     testImplementation 'org.mockito:mockito-core:5.12.0'
 }
 
+javafx {
+    version = "23"   // oppure 21/22 se preferisci
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+application {
+    mainClass = 'it.unicam.cs.mpgc.jbudget109205.GUI.MainApp'
+}
+
 test {
-    // Necessario per abilitare JUnit 5 con Gradle
+
     useJUnitPlatform()
 }
+
