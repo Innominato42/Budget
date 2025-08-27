@@ -9,98 +9,107 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
-public class MovimentiView {
-    private final MovimentoManager movimentoManager;
-    private final BudgetManager budgetManager;
-    private final TableView<Movimento> movimentiTable;
+    public class MovimentiView {
 
-    // riferimento alla budgetView per notificare aggiornamenti
-    private BudgetView budgetView;
+        private final MovimentoManager movimentoManager;
+        private final CategoryManager categoryManager;
+        private final TableView<Movimento> table;
 
-    public MovimentiView(MovimentoManager movimentoManager, BudgetManager budgetManager) {
-        this.movimentoManager = movimentoManager;
-        this.budgetManager = budgetManager;
-        this.movimentiTable = new TableView<>();
-    }
+        public MovimentiView(MovimentoManager movimentoManager, CategoryManager categoryManager) {
+            this.movimentoManager = movimentoManager;
+            this.categoryManager = categoryManager;
+            this.table = new TableView<>();
+        }
 
-    public void setBudgetView(BudgetView budgetView) {
-        this.budgetView = budgetView;
-    }
+        public VBox getView() {
+            // Colonne tabella
+            TableColumn<Movimento, Double> colImporto = new TableColumn<>("Importo");
+            colImporto.setCellValueFactory(cd -> new SimpleDoubleProperty(cd.getValue().getAmount()).asObject());
 
-    public VBox getView() {
-        // Colonne tabella
-        TableColumn<Movimento, Double> colImporto = new TableColumn<>("Importo");
-        colImporto.setCellValueFactory(cd -> new SimpleDoubleProperty(cd.getValue().getAmount()).asObject());
+            TableColumn<Movimento, String> colDescrizione = new TableColumn<>("Descrizione");
+            colDescrizione.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getDescription()));
 
-        TableColumn<Movimento, String> colDescrizione = new TableColumn<>("Descrizione");
-        colDescrizione.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getDescription()));
+            TableColumn<Movimento, LocalDate> colData = new TableColumn<>("Data");
+            colData.setCellValueFactory(cd -> new SimpleObjectProperty<>(cd.getValue().getDate()));
 
-        TableColumn<Movimento, LocalDate> colData = new TableColumn<>("Data");
-        colData.setCellValueFactory(cd -> new SimpleObjectProperty<>(cd.getValue().getDate()));
+            TableColumn<Movimento, String> colCategorie = new TableColumn<>("Categoria");
+            colCategorie.setCellValueFactory(cd ->
+                    new SimpleStringProperty(
+                            cd.getValue().getCategories().stream()
+                                    .map(ICategory::getName)
+                                    .findFirst()
+                                    .orElse("")
+                    )
+            );
 
-        TableColumn<Movimento, String> colCategorie = new TableColumn<>("Categorie");
-        colCategorie.setCellValueFactory(cd -> {
-            String categorie = cd.getValue().getCategories().stream()
-                    .map(ICategory::getName)
-                    .reduce((a, b) -> a + ", " + b)
-                    .orElse("");
-            return new SimpleStringProperty(categorie);
-        });
+            table.getColumns().addAll(colImporto, colDescrizione, colData, colCategorie);
 
-        movimentiTable.getColumns().addAll(colImporto, colDescrizione, colData, colCategorie);
+            // --- Input ---
+            TextField descrizioneField = new TextField();
+            descrizioneField.setPromptText("Descrizione");
 
-        // Campi input
-        TextField descrizioneField = new TextField();
-        descrizioneField.setPromptText("Descrizione");
+            TextField importoField = new TextField();
+            importoField.setPromptText("Importo (es. 50.0)");
 
-        TextField importoField = new TextField();
-        importoField.setPromptText("Importo");
+            ComboBox<ICategory> categoriaBox = new ComboBox<>();
+            categoriaBox.getItems().setAll(new ArrayList<>(categoryManager.getAllCategories()));
+            categoriaBox.setPromptText("Seleziona categoria");
 
-        DatePicker dataPicker = new DatePicker(LocalDate.now());
+            DatePicker dataPicker = new DatePicker(LocalDate.now());
 
-        TextField categoriaField = new TextField();
-        categoriaField.setPromptText("Categoria");
+            // --- Bottone ---
+            Button aggiungiBtn = new Button("Aggiungi Movimento");
+            aggiungiBtn.setOnAction(e -> {
+                try {
+                    double importo = Double.parseDouble(importoField.getText().trim());
+                    String descrizione = descrizioneField.getText().trim();
+                    ICategory categoria = categoriaBox.getValue();
+                    LocalDate data = dataPicker.getValue();
 
-        Button aggiungiBtn = new Button("Aggiungi Movimento");
-        aggiungiBtn.setOnAction(e -> {
-            try {
-                double importo = Double.parseDouble(importoField.getText());
-                String descrizione = descrizioneField.getText();
-                LocalDate data = dataPicker.getValue();
-                String categoriaNome = categoriaField.getText();
+                    if (descrizione.isEmpty() || categoria == null || data == null) {
+                        throw new IllegalArgumentException("Compila tutti i campi.");
+                    }
 
-                Movimento nuovo = new Movimento(importo, data, descrizione);
-                nuovo.aggiungiCategoria(new Category(categoriaNome, null));
+                    Movimento nuovo = new Movimento(importo, data, descrizione);
+                    nuovo.aggiungiCategoria(categoria);
 
-                movimentoManager.aggiungiMovimento(nuovo);
-                movimentiTable.getItems().add(nuovo);
+                    movimentoManager.aggiungiMovimento(nuovo);
+                    refresh();
 
-                // aggiorno la budgetView se esiste
-                if (budgetView != null) {
-                    budgetView.refresh();
+                    descrizioneField.clear();
+                    importoField.clear();
+                    categoriaBox.setValue(null);
+                    dataPicker.setValue(LocalDate.now());
+
+                } catch (NumberFormatException nfe) {
+                    new Alert(Alert.AlertType.ERROR, "Importo non valido.").showAndWait();
+                } catch (Exception ex) {
+                    new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
                 }
+            });
 
-                // pulizia campi
-                importoField.clear();
-                descrizioneField.clear();
-                categoriaField.clear();
-            } catch (NumberFormatException ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Importo non valido", ButtonType.OK);
-                alert.showAndWait();
-            }
-        });
+            VBox layout = new VBox(10,
+                    table,
+                    descrizioneField,
+                    importoField,
+                    categoriaBox,
+                    dataPicker,
+                    aggiungiBtn
+            );
+            layout.setPadding(new Insets(10));
 
-        VBox layout = new VBox(10,
-                movimentiTable,
-                descrizioneField,
-                importoField,
-                dataPicker,
-                categoriaField,
-                aggiungiBtn
-        );
-        layout.setPadding(new Insets(10));
+            return layout;
+        }
 
-        return layout;
+        public void refresh() {
+            table.getItems().setAll(
+                    movimentoManager.getAllMovimenti().stream()
+                            .filter(m -> m instanceof Movimento)
+                            .map(m -> (Movimento) m)
+                            .toList()
+            );
+        }
     }
-}
+

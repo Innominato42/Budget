@@ -1,9 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109205.GUI;
 
-import it.unicam.cs.mpgc.jbudget109205.Model.Budget;
-import it.unicam.cs.mpgc.jbudget109205.Model.BudgetManager;
-import it.unicam.cs.mpgc.jbudget109205.Model.Category;
-import it.unicam.cs.mpgc.jbudget109205.Model.ICategory;
+import it.unicam.cs.mpgc.jbudget109205.Model.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,80 +10,87 @@ import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 
 public class BudgetView {
 
     private final BudgetManager budgetManager;
-    private final TableView<Budget> budgetTable;
+    private final CategoryManager categoryManager;
+    private final TableView<Budget> table;
 
-    public BudgetView(BudgetManager budgetManager) {
+    public BudgetView(BudgetManager budgetManager, CategoryManager categoryManager) {
         this.budgetManager = budgetManager;
-        this.budgetTable = new TableView<>();
+        this.categoryManager = categoryManager;
+        this.table = new TableView<>();
     }
 
     public VBox getView() {
-        // Colonne tabella
+        // Colonne
         TableColumn<Budget, String> colCategoria = new TableColumn<>("Categoria");
-        colCategoria.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getCategory().getName()));
-
-        TableColumn<Budget, YearMonth> colMese = new TableColumn<>("Mese");
-        colMese.setCellValueFactory(cd -> new SimpleObjectProperty<>(cd.getValue().getMonth()));
-
-        TableColumn<Budget, Double> colLimite = new TableColumn<>("Budget");
-        colLimite.setCellValueFactory(cd -> new SimpleDoubleProperty(cd.getValue().getLimit()).asObject());
-
-        TableColumn<Budget, Double> colSpeso = new TableColumn<>("Speso");
-        colSpeso.setCellValueFactory(cd ->
-                new SimpleDoubleProperty(
-                        budgetManager.getTotalSpent(cd.getValue().getCategory(), cd.getValue().getMonth())
-                ).asObject()
+        colCategoria.setCellValueFactory(cd ->
+                new SimpleStringProperty(cd.getValue().getCategory().getName())
         );
 
-        TableColumn<Budget, Double> colRimanente = new TableColumn<>("Rimanente");
-        colRimanente.setCellValueFactory(cd ->
-                new SimpleDoubleProperty(
-                        budgetManager.getRemainingBudget(cd.getValue().getCategory(), cd.getValue().getMonth())
-                ).asObject()
+        TableColumn<Budget, Double> colTotale = new TableColumn<>("Totale");
+        colTotale.setCellValueFactory(cd ->
+                new SimpleDoubleProperty(cd.getValue().getLimit()).asObject()
         );
 
-        budgetTable.getColumns().addAll(colCategoria, colMese, colLimite, colSpeso, colRimanente);
+        TableColumn<Budget, Double> colUsato = new TableColumn<>("Usato");
+        colUsato.setCellValueFactory(cd -> {
+            Budget budget = cd.getValue();
+            double speso = budgetManager.getTotalSpent(budget.getCategory(), budget.getMonth());
+            return new SimpleDoubleProperty(speso).asObject();
+        });
 
-        // Campi input
-        TextField categoriaField = new TextField();
-        categoriaField.setPromptText("Categoria");
+        TableColumn<Budget, YearMonth> colScadenza = new TableColumn<>("Mese");
+        colScadenza.setCellValueFactory(cd ->
+                new SimpleObjectProperty<>(cd.getValue().getMonth())
+        );
 
-        TextField meseField = new TextField();
-        meseField.setPromptText("Mese (YYYY-MM)");
+        table.getColumns().addAll(colCategoria, colTotale, colUsato, colScadenza);
 
-        TextField budgetField = new TextField();
-        budgetField.setPromptText("Budget");
+        // --- Input ---
+        ComboBox<ICategory> categoriaBox = new ComboBox<>();
+        categoriaBox.getItems().setAll(new ArrayList<>(categoryManager.getAllCategories()));
+        categoriaBox.setPromptText("Categoria");
+
+        TextField totaleField = new TextField();
+        totaleField.setPromptText("Importo Totale");
+
+        DatePicker dataPicker = new DatePicker(LocalDate.now().withDayOfMonth(1));
 
         Button aggiungiBtn = new Button("Aggiungi Budget");
         aggiungiBtn.setOnAction(e -> {
             try {
-                String categoriaNome = categoriaField.getText();
-                YearMonth mese = YearMonth.parse(meseField.getText());
-                double importo = Double.parseDouble(budgetField.getText());
+                ICategory categoria = categoriaBox.getValue();
+                double totale = Double.parseDouble(totaleField.getText().trim());
+                LocalDate data = dataPicker.getValue();
 
-                ICategory categoria = new Category(categoriaNome, null);
-                budgetManager.setBudget(categoria, mese, importo);
+                if (categoria == null || data == null) {
+                    throw new IllegalArgumentException("Seleziona categoria e data.");
+                }
 
+                YearMonth mese = YearMonth.from(data);
+                budgetManager.setBudget(categoria, mese, totale);
                 refresh();
 
-                categoriaField.clear();
-                meseField.clear();
-                budgetField.clear();
+                categoriaBox.setValue(null);
+                totaleField.clear();
+                dataPicker.setValue(LocalDate.now().withDayOfMonth(1));
+
+            } catch (NumberFormatException nfe) {
+                new Alert(Alert.AlertType.ERROR, "Importo non valido.").showAndWait();
             } catch (Exception ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Dati non validi", ButtonType.OK);
-                alert.showAndWait();
+                new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
             }
         });
 
         VBox layout = new VBox(10,
-                budgetTable,
-                categoriaField,
-                meseField,
-                budgetField,
+                table,
+                categoriaBox,
+                totaleField,
+                dataPicker,
                 aggiungiBtn
         );
         layout.setPadding(new Insets(10));
@@ -95,6 +99,6 @@ public class BudgetView {
     }
 
     public void refresh() {
-        budgetTable.getItems().setAll(budgetManager.getAllBudgetEntries());
+        table.getItems().setAll(budgetManager.getAllBudgetEntries());
     }
 }

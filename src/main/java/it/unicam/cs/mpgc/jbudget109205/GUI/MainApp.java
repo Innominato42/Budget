@@ -17,33 +17,58 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 
 public class MainApp extends Application {
+
     private MovimentoManager movimentoManager;
     private BudgetManager budgetManager;
+    private CategoryManager categoryManager;
+    private Scadenzario scadenzario;
+    private Statistiche statistiche;
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setTitle("jBudget 109205");
+
+        // --- Manager principali ---
         movimentoManager = new MovimentoManager();
         budgetManager = new BudgetManager(movimentoManager);
+        categoryManager = new CategoryManager();
+        scadenzario = new Scadenzario(movimentoManager);
+        statistiche = new Statistiche(movimentoManager);
 
-        MovimentiView movimentiView = new MovimentiView(movimentoManager, budgetManager);
-        BudgetView budgetView = new BudgetView(budgetManager);
+        // Layout principale
+        BorderPane root = new BorderPane();
 
-        // collego le due view
-        movimentiView.setBudgetView(budgetView);
-
+        // TabPane con le sezioni
         TabPane tabPane = new TabPane();
 
+        // --- MOVIMENTI ---
+        MovimentiView movimentiView = new MovimentiView(movimentoManager, categoryManager);
         Tab movimentiTab = new Tab("Movimenti", movimentiView.getView());
         movimentiTab.setClosable(false);
 
+        // --- BUDGET ---
+        BudgetView budgetView = new BudgetView(budgetManager, categoryManager);
         Tab budgetTab = new Tab("Budget", budgetView.getView());
         budgetTab.setClosable(false);
 
-        tabPane.getTabs().addAll(movimentiTab, budgetTab);
+        // --- SCADENZARIO ---
+        ScadenzarioView scadenzarioView = new ScadenzarioView(scadenzario, categoryManager);
+        Tab scadenzarioTab = new Tab("Scadenzario", scadenzarioView.getView());
+        scadenzarioTab.setClosable(false);
 
-        Scene scene = new Scene(tabPane, 900, 600);
+        // --- STATISTICHE ---
+        StatisticheView statisticheView = new StatisticheView(statistiche);
+        Tab statisticheTab = new Tab("Statistiche", statisticheView.getView());
+        statisticheTab.setClosable(false);
+
+        // Aggiungo tutte le tab
+        tabPane.getTabs().addAll(movimentiTab, budgetTab, scadenzarioTab, statisticheTab);
+
+        root.setCenter(tabPane);
+
+        // Creo scena e mostro
+        Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("jBudget 109205");
         primaryStage.show();
     }
 

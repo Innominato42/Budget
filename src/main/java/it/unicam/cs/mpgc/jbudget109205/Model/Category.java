@@ -43,4 +43,9 @@ public class Category implements ICategory {
     public int hashCode() {
         return Objects.hash(name);
     }
+
+    @Override
+    public String toString() {
+        return name; // così in GUI vedrai solo il nome
+    }
 }
