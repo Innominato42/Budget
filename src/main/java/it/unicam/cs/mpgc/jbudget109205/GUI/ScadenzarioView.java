@@ -24,7 +24,7 @@ public class ScadenzarioView {
     }
 
     public VBox getView() {
-        // Colonne tabella
+
         TableColumn<MovimentoProgrammato, Double> colImporto = new TableColumn<>("Importo");
         colImporto.setCellValueFactory(cd -> new SimpleDoubleProperty(cd.getValue().getImporto()).asObject());
 
@@ -59,7 +59,7 @@ public class ScadenzarioView {
 
         DatePicker dataPicker = new DatePicker(LocalDate.now());
 
-        // --- Bottone aggiungi ---
+
         Button aggiungiBtn = new Button("Aggiungi Programmato");
         aggiungiBtn.setOnAction(e -> {
             try {
@@ -82,7 +82,7 @@ public class ScadenzarioView {
                 scadenzario.aggiungiMovimento(nuovo);
                 refresh();
 
-                // pulizia form
+
                 descrizioneField.clear();
                 importoField.clear();
                 categoriaBox.setValue(null);
@@ -95,7 +95,7 @@ public class ScadenzarioView {
             }
         });
 
-        // --- Bottone esegui ---
+
         Button eseguiBtn = new Button("Esegui scadenze di oggi");
         eseguiBtn.setOnAction(e -> {
             scadenzario.eseguiMovimenti(LocalDate.now());

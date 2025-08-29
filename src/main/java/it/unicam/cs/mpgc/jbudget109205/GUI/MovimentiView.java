@@ -24,7 +24,7 @@ import java.util.ArrayList;
         }
 
         public VBox getView() {
-            // Colonne tabella
+
             TableColumn<Movimento, Double> colImporto = new TableColumn<>("Importo");
             colImporto.setCellValueFactory(cd -> new SimpleDoubleProperty(cd.getValue().getAmount()).asObject());
 
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 
             table.getColumns().addAll(colImporto, colDescrizione, colData, colCategorie);
 
-            // --- Input ---
+
             TextField descrizioneField = new TextField();
             descrizioneField.setPromptText("Descrizione");
 
@@ -59,7 +59,7 @@ import java.util.ArrayList;
 
             DatePicker dataPicker = new DatePicker(LocalDate.now());
 
-            // --- Bottone ---
+
             Button aggiungiBtn = new Button("Aggiungi Movimento");
             aggiungiBtn.setOnAction(e -> {
                 try {

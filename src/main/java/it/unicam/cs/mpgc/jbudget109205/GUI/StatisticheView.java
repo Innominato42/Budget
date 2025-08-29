@@ -36,7 +36,7 @@ public class StatisticheView {
     }
 
     public VBox getView() {
-        // --- Selettore mese ---
+
         Label lblMese = new Label("Mese:");
         Button btnAggiorna = new Button("Aggiorna");
         btnAggiorna.setOnAction(e -> refresh());
@@ -44,7 +44,7 @@ public class StatisticheView {
         HBox topBar = new HBox(10, lblMese, monthPicker, btnAggiorna);
         topBar.setPadding(new Insets(10));
 
-        // --- Tabella Categoria | Speso | % ---
+
         TableColumn<RigaCategoria, String> colCat = new TableColumn<>("Categoria");
         colCat.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().categoria));
 
@@ -58,18 +58,18 @@ public class StatisticheView {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         VBox.setVgrow(table, Priority.ALWAYS);
 
-        // --- Box info sintetiche ---
+
         VBox infoBox = new VBox(6,
-                new Label("Categoria più costosa:"), lblTopCategory,
+                new Label("Categoria piu costosa:"), lblTopCategory,
                 new Label("Media mensile (tutti i mesi):"), lblMediaMensile
         );
         infoBox.setPadding(new Insets(10));
 
-        // --- Grafico a torta ---
+
         pieChart.setLegendVisible(true);
         pieChart.setLabelsVisible(false);
 
-        // Layout principale
+
         SplitPane split = new SplitPane();
         split.getItems().addAll(table, pieChart);
         split.setDividerPositions(0.55);
@@ -77,7 +77,7 @@ public class StatisticheView {
         VBox root = new VBox(10, topBar, split, infoBox);
         root.setPadding(new Insets(10));
 
-        // Primo caricamento
+
         refresh();
 
         return root;
@@ -89,18 +89,18 @@ public class StatisticheView {
                 ? monthPicker.getValue()
                 : LocalDate.now().withDayOfMonth(1));
 
-        // Dati base
+
         Map<ICategory, Double> spese = statistiche.getSpesePerCategoria(mese);
         Map<ICategory, Double> percentuali = statistiche.getPercentualiPerCategoria(mese);
 
-        // Tabella
+
         table.getItems().clear();
         spese.forEach((cat, speso) -> {
             double perc = percentuali.getOrDefault(cat, 0.0);
             table.getItems().add(new RigaCategoria(cat.getName(), speso, perc));
         });
 
-        // Grafico
+
         pieChart.getData().clear();
         percentuali.forEach((cat, perc) -> {
             if (perc != 0.0) {
@@ -108,16 +108,16 @@ public class StatisticheView {
             }
         });
 
-        // Categoria più costosa
+
         ICategory top = statistiche.getCategoriaPiuCostosa(mese);
         lblTopCategory.setText(top != null ? top.getName() : "—");
 
-        // Media mensile complessiva
+
         double media = statistiche.getMediaMensile();
         lblMediaMensile.setText(String.format("%.2f", media));
     }
 
-    /** DTO interno per la tabella */
+
     private static class RigaCategoria {
         final String categoria;
         final double speso;

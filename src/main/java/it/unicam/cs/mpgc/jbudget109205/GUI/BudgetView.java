@@ -50,7 +50,6 @@ public class BudgetView {
 
         table.getColumns().addAll(colCategoria, colTotale, colUsato, colScadenza);
 
-        // --- Input ---
         ComboBox<ICategory> categoriaBox = new ComboBox<>();
         categoriaBox.getItems().setAll(new ArrayList<>(categoryManager.getAllCategories()));
         categoriaBox.setPromptText("Categoria");

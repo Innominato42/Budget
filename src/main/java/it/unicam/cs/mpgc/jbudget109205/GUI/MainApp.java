@@ -28,17 +28,16 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("jBudget 109205");
 
-        // --- Manager principali ---
         movimentoManager = new MovimentoManager();
         budgetManager = new BudgetManager(movimentoManager);
         categoryManager = new CategoryManager();
         scadenzario = new Scadenzario(movimentoManager);
         statistiche = new Statistiche(movimentoManager);
 
-        // Layout principale
+
         BorderPane root = new BorderPane();
 
-        // TabPane con le sezioni
+
         TabPane tabPane = new TabPane();
 
         // --- MOVIMENTI ---
@@ -61,12 +60,12 @@ public class MainApp extends Application {
         Tab statisticheTab = new Tab("Statistiche", statisticheView.getView());
         statisticheTab.setClosable(false);
 
-        // Aggiungo tutte le tab
+
         tabPane.getTabs().addAll(movimentiTab, budgetTab, scadenzarioTab, statisticheTab);
 
         root.setCenter(tabPane);
 
-        // Creo scena e mostro
+
         Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
