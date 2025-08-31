@@ -4,11 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * La classe Category rappresenta una categoria di spesa all'interno del sistema di gestione del budget
+ */
 public class Category implements ICategory {
     private String name;
     private ICategory parent;
     private List<ICategory> children = new ArrayList<>();
 
+    /**
+     * Costruisce una nuova Categoria
+     * @param name il nome della nuova categoria
+     * @param parent la categoria padre a cui questa appartiene, oppure {@code null} se si tratta di una categoria di primo livello.
+     * Ogni categoria può quindi essere organizzata in una gerarchia ad albero, ad esempio "Casa" potrebbe contenere "Affitto" e "Luce"
+     */
     public Category(String name, ICategory parent) {
         this.name = name;
         this.parent = parent;

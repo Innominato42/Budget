@@ -5,13 +5,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * La classe movimento rappresenta una transazione economica registrata all'interno del sistema di gestione del budget
+ */
 public class Movimento implements IMovimento{
     private final UUID id;
     private LocalDate date;
     private  double amount;
     private  String description;
     private  Set<ICategory> categories;
-
+    
     public Movimento(UUID id,LocalDate date, double amount, String description, Set<ICategory> categories) {
         this.id=id;
         this.date = date;
