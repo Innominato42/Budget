@@ -46,7 +46,6 @@ public class ScadenzarioView {
 
         table.getColumns().addAll(colImporto, colDescrizione, colData, colCategorie);
 
-        // --- Form input ---
         TextField descrizioneField = new TextField();
         descrizioneField.setPromptText("Descrizione");
 

@@ -24,7 +24,6 @@ public class BudgetManagerTest {
         movimentoManager = new MovimentoManager();
         budgetManager = new BudgetManager(movimentoManager);
 
-        // Categorie fittizie
         alimentari = new Category("Alimentari", null);
         trasporti = new Category("Trasporti", null);
     }

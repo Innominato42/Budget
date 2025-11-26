@@ -33,19 +33,10 @@ public class ScadenzarioTest {
                 Set.of(category)
         );
 
-        // aggiungi movimento programmato
         scadenzario.aggiungiMovimento(mp);
-
-        // verifica che ci sia nella lista
         assertTrue(scadenzario.getMovimenti().contains(mp));
-
-        // esegui i movimenti alla data specificata
         scadenzario.eseguiMovimenti(LocalDate.of(2025, 8, 10));
-
-        // dopo esecuzione, lo scadenziario non deve più contenere il movimento
         assertFalse(scadenzario.getMovimenti().contains(mp));
-
-        // il movimento reale deve essere stato aggiunto a movimentoManager
         assertTrue(movimentoManager.getAllMovimenti().stream()
                 .anyMatch(m -> m.getDescription().equals("Bollette") && m.getAmount() == 100.0));
     }

@@ -40,22 +40,21 @@ public class MainApp extends Application {
 
         TabPane tabPane = new TabPane();
 
-        // --- MOVIMENTI ---
         MovimentiView movimentiView = new MovimentiView(movimentoManager, categoryManager);
         Tab movimentiTab = new Tab("Movimenti", movimentiView.getView());
         movimentiTab.setClosable(false);
 
-        // --- BUDGET ---
+
         BudgetView budgetView = new BudgetView(budgetManager, categoryManager);
         Tab budgetTab = new Tab("Budget", budgetView.getView());
         budgetTab.setClosable(false);
 
-        // --- SCADENZARIO ---
+
         ScadenzarioView scadenzarioView = new ScadenzarioView(scadenzario, categoryManager);
         Tab scadenzarioTab = new Tab("Scadenzario", scadenzarioView.getView());
         scadenzarioTab.setClosable(false);
 
-        // --- STATISTICHE ---
+
         StatisticheView statisticheView = new StatisticheView(statistiche);
         Tab statisticheTab = new Tab("Statistiche", statisticheView.getView());
         statisticheTab.setClosable(false);

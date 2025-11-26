@@ -18,11 +18,11 @@ public class CategoryManagerTest {
 
         manager.addCategory("Casa", rootName);
 
-        // Sottocategorie di Casa
+        //casa
         manager.addCategory("Arredamento", "Casa");
         manager.addCategory("Ristrutturazione", "Casa");
 
-        // Categoria sotto Utenze
+        //utenze
         manager.addCategory("Luce", "Utenze");
         manager.addCategory("Gas", "Utenze");
     }

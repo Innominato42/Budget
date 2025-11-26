@@ -25,7 +25,6 @@ public class BudgetView {
     }
 
     public VBox getView() {
-        // Colonne
         TableColumn<Budget, String> colCategoria = new TableColumn<>("Categoria");
         colCategoria.setCellValueFactory(cd ->
                 new SimpleStringProperty(cd.getValue().getCategory().getName())

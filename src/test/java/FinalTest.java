@@ -32,7 +32,7 @@ public class FinalTest {
         m1.aggiungiCategoria(spesa);
         movimentoManager.aggiungiMovimento(m1);
 
-        // 5. Creo un movimento programmato (cinema)
+
         MovimentoProgrammato mp = new MovimentoProgrammato(
                 LocalDate.of(2025, 8, 10),
                 -50.0,
